@@ -20,13 +20,16 @@ investments = [
 def calculate_net_savings(gas_savings_base, electricity_consumption, maintenance, gas_price, electricity_price):
     gas_savings = gas_savings_base * gas_price  # Gas savings change with gas price
     electricity_cost = electricity_consumption * electricity_price  # Electricity cost depends on price
-    return gas_savings - electricity_cost - maintenance
+    net_savings = gas_savings - electricity_cost - maintenance
+    return max(net_savings, 0)  # Ensure savings do not go negative
 
 def calculate_payback(investment_cost, net_savings):
-    return investment_cost / net_savings if net_savings > 0 else float("inf")
+    if net_savings <= 0:
+        return float("inf")  # If no savings, payback is impossible
+    return investment_cost / net_savings
 
 def calculate_npv(net_savings, pv_factor):
-    return net_savings * pv_factor
+    return max(net_savings * pv_factor, 0)  # Ensure NPV does not go negative
 
 # Generate dynamic values
 npv_values = []
