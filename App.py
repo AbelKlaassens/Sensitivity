@@ -7,7 +7,7 @@ st.title("Sensitivity Analysis: NPV & Payback Period")
 
 # Move sliders to the top for better mobile usability
 st.subheader("Adjust Variables")
-electricity_price = st.slider("Electricity Price (€/kWh)", 0.05, 0.3, 0.1, 0.01)
+electricity_price = st.slider("Electricity Price (€/kWh)", 0.05, 0.3, 0.15, 0.01)
 gas_price = st.slider("Gas Price (€/kWh)", 0.02, 0.1, 0.053, 0.005)
 
 # Constants
@@ -51,8 +51,8 @@ for investment in investments:
     net_savings = calculate_net_savings(gas_savings, investment["co2_savings"], electricity_cost, investment["maintenance"])
     updated_npv = calculate_npv(net_savings, investment["pv_factor"])
     updated_payback = calculate_payback(investment["cost"], net_savings)
-    npv_values.append(updated_npv)
-    payback_values.append(updated_payback if updated_payback < float("inf") else 0)  # Avoid infinite values
+    npv_values.append(round(updated_npv, 2))
+    payback_values.append(round(updated_payback, 2) if updated_payback < float("inf") else 0)  # Avoid infinite values
     investment_names.append(investment["name"])
 
 # Plot NPV Graph
