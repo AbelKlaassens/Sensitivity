@@ -12,13 +12,15 @@ gas_price = st.slider("Gas Price (€/kWh)", 0.02, 0.1, 0.05, 0.005)
 
 # Investment options data
 investments = [
-    {"name": "Investment 1", "cost": 180000, "gas_savings": 70352.75, "electricity_savings": 42442.2, "maintenance": 4500, "pv_factor": 8.443793688},
-    {"name": "Investment 2", "cost": 240000, "gas_savings": 85526.87, "electricity_savings": 66576, "maintenance": 6000, "pv_factor": 8.443793688},
-    {"name": "Investment 3", "cost": 350000, "gas_savings": 111609.17, "electricity_savings": 89775, "maintenance": 8750, "pv_factor": 8.443793688},
+    {"name": "Investment 1", "cost": 180000, "gas_savings_base": 139727, "electricity_consumption": 282948, "maintenance": 4500, "pv_factor": 8.443793688},
+    {"name": "Investment 2", "cost": 240000, "gas_savings_base": 169864, "electricity_consumption": 443840, "maintenance": 6000, "pv_factor": 8.443793688},
+    {"name": "Investment 3", "cost": 350000, "gas_savings_base": 221666, "electricity_consumption": 598500, "maintenance": 8750, "pv_factor": 8.443793688},
 ]
 
-def calculate_net_savings(gas_savings, electricity_savings, maintenance):
-    return gas_savings + electricity_savings - maintenance
+def calculate_net_savings(gas_savings_base, electricity_consumption, maintenance, gas_price, electricity_price):
+    gas_savings = gas_savings_base * gas_price  # Gas savings change with gas price
+    electricity_cost = electricity_consumption * electricity_price  # Electricity cost depends on price
+    return gas_savings - electricity_cost - maintenance
 
 def calculate_payback(investment_cost, net_savings):
     return investment_cost / net_savings if net_savings > 0 else float("inf")
@@ -32,7 +34,7 @@ payback_values = []
 investment_names = []
 
 for investment in investments:
-    net_savings = calculate_net_savings(investment["gas_savings"], investment["electricity_savings"], investment["maintenance"])
+    net_savings = calculate_net_savings(investment["gas_savings_base"], investment["electricity_consumption"], investment["maintenance"], gas_price, electricity_price)
     updated_npv = calculate_npv(net_savings, investment["pv_factor"])
     updated_payback = calculate_payback(investment["cost"], net_savings)
     npv_values.append(updated_npv)
